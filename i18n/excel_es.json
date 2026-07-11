@@ -1,0 +1,18 @@
+{
+    "ExcelWriter": {
+        "corruptTemplate": "Plantilla de Excel incorrecta: {0}",
+        "missingTemplatePart": "Plantilla de Excel incorrecta: falta {0}",
+        "unparsableTemplatePart": "Plantilla de Excel incorrecta: no se pudo analizar {0}",
+        "missingRootElement": "Plantilla de Excel incorrecta: {0} no tiene elemento raíz",
+        "missingSheetElement": "Plantilla de Excel incorrecta: falta el elemento <sheet> en workbook.xml",
+        "missingSheetDataElement": "Plantilla de Excel incorrecta: falta el elemento <sheetData> en sheet1.xml",
+        "emptyWorkbook": "No se puede escribir un libro de trabajo vacío: agregue al menos una hoja primero"
+    },
+    "ExcelReader": {
+        "notAWorkbook": "El archivo seleccionado no es un libro de Excel válido: {0}",
+        "missingWorkbookPart": "Archivo de Excel incorrecto: falta {0}",
+        "unparsableXmlPart": "Archivo de Excel incorrecto: no se pudo analizar una parte XML interna",
+        "noSheets": "El archivo de Excel no contiene ninguna hoja visible",
+        "sheetNotFound": "El archivo de Excel no contiene ninguna hoja llamada '{0}'"
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "ExcelWriter": {
+        "corruptTemplate": "Modèle Excel incorrect : {0}",
+        "missingTemplatePart": "Modèle Excel incorrect : {0} manquant",
+        "unparsableTemplatePart": "Modèle Excel incorrect : impossible d'analyser {0}",
+        "missingRootElement": "Modèle Excel incorrect : {0} n'a pas d'élément racine",
+        "missingSheetElement": "Modèle Excel incorrect : élément <sheet> manquant dans workbook.xml",
+        "missingSheetDataElement": "Modèle Excel incorrect : élément <sheetData> manquant dans sheet1.xml",
+        "emptyWorkbook": "Impossible d'écrire un classeur vide : ajoutez au moins une feuille d'abord"
+    },
+    "ExcelReader": {
+        "notAWorkbook": "Le fichier sélectionné n'est pas un classeur Excel valide : {0}",
+        "missingWorkbookPart": "Fichier Excel incorrect : {0} manquant",
+        "unparsableXmlPart": "Fichier Excel incorrect : impossible d'analyser une partie XML interne",
+        "noSheets": "Le fichier Excel ne contient aucune feuille visible",
+        "sheetNotFound": "Le fichier Excel ne contient aucune feuille nommée '{0}'"
+    }
+}

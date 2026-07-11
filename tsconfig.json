@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "moduleResolution": "nodenext",
+        "module": "nodenext",
+        "noImplicitAny": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "declaration": true,
+        "rootDir": "./ts",
+        "outDir": "./dist",
+        "forceConsistentCasingInFileNames": true,
+        "strict": false,
+        "esModuleInterop": true,
+        "types": [
+            "node"
+        ]
+    },
+    "include": [
+        "ts/**/*"
+    ]
+}

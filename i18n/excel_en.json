@@ -1,0 +1,18 @@
+{
+    "ExcelWriter": {
+        "corruptTemplate": "Malformed Excel template: {0}",
+        "missingTemplatePart": "Malformed Excel template: missing {0}",
+        "unparsableTemplatePart": "Malformed Excel template: could not parse {0}",
+        "missingRootElement": "Malformed Excel template: {0} has no root element",
+        "missingSheetElement": "Malformed Excel template: missing <sheet> element in workbook.xml",
+        "missingSheetDataElement": "Malformed Excel template: missing <sheetData> element in sheet1.xml",
+        "emptyWorkbook": "Cannot write an empty workbook: add at least one sheet first"
+    },
+    "ExcelReader": {
+        "notAWorkbook": "The selected file is not a valid Excel workbook: {0}",
+        "missingWorkbookPart": "Malformed Excel file: missing {0}",
+        "unparsableXmlPart": "Malformed Excel file: could not parse an internal XML part",
+        "noSheets": "The Excel file does not contain any visible sheet",
+        "sheetNotFound": "The Excel file does not contain a sheet named '{0}'"
+    }
+}

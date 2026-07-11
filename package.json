@@ -1,0 +1,48 @@
+{
+  "name": "typesexcel",
+  "productName": "TypesExcel",
+  "version": "1.0.0",
+  "description": "TypeScript library for reading and writing Excel (.xlsx) files",
+  "keywords": [
+    "Excel",
+    "XLSX",
+    "OOXML",
+    "spreadsheet",
+    "TypeScript",
+    "zip"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "tsc && node dist/copy-assets.js"
+  },
+  "author": {
+    "name": "Rodolfo M. Raya",
+    "url": "https://maxprograms.com",
+    "email": "rmraya@maxprograms.com"
+  },
+  "license": "EPL-1.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maxprograms-com/TypesExcel.git"
+  },
+  "dependencies": {
+    "typesxml": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "typescript": "^6.0.3"
+  }
+}
