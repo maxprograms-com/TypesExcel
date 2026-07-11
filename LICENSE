@@ -1,15 +1,3 @@
-Anchovy License Agreement
-
-This software distribution consists of the Anchovy application, licensed under
-the Eclipse Public License 1.0 (EPL), which uses the OpenXLIFF Filters module.
-
-The OpenXLIFF Filters module includes the XMLJava and BCP47J libraries, which are
-proprietary technology of Maxprograms. These libraries are source-available but
-not open source. Their license prohibits commercial redistribution, sublicensing,
-or incorporation into other commercial products without a separate agreement.
-
----
-
 Eclipse Public License - v 1.0
 
 THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS ECLIPSE
