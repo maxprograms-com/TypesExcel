@@ -1,7 +1,7 @@
 {
   "name": "typesexcel",
   "productName": "TypesExcel",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "TypeScript library for reading and writing Excel (.xlsx) files",
   "keywords": [
     "Excel",
@@ -42,7 +42,7 @@
     "typesxml": "^2.2.1"
   },
   "devDependencies": {
-    "@types/node": "^24.13.2",
+    "@types/node": "^24.13.3",
     "typescript": "^6.0.3"
   }
 }

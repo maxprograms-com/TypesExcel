@@ -22,7 +22,7 @@ import { ExcelWorkbook } from './excelWorkbook.js';
 import { ZipUtils } from './zipUtils.js';
 
 const TEMPLATE_PATH: string = join(dirname(fileURLToPath(import.meta.url)), 'template.xlsx');
-const COLUMN_WIDTH: string = '30';
+const DEFAULT_COLUMN_WIDTH: string = '30';
 
 export class ExcelWriter {
     private i18n: I18n;
@@ -76,6 +76,9 @@ export class ExcelWriter {
         }
         let dateStyleIndex: number = hasDate ? this.ensureDateStyleIndex(entries) : -1;
 
+        let hasBoldHeader: boolean = sheets.some((sheet: ExcelSheet) => sheet.getBoldHeader());
+        let headerStyleIndex: number = hasBoldHeader ? this.ensureHeaderStyleIndex(entries) : -1;
+
         let unique: Map<string, number> = new Map();
         let totalStringCount: number = 0;
         for (let sheet of sheets) {
@@ -120,6 +123,7 @@ export class ExcelWriter {
             }
 
             let headers: string[] = sheet.getHeaders();
+            let columnWidths: number[] | undefined = sheet.getColumnWidths();
             let columnsElement: XMLElement | undefined = sheetRoot.getChild('cols');
             if (columnsElement) {
                 columnsElement.setContent([]);
@@ -127,7 +131,7 @@ export class ExcelWriter {
                     let col: XMLElement = new XMLElement('col');
                     col.setAttribute(new XMLAttribute('min', '' + (c + 1)));
                     col.setAttribute(new XMLAttribute('max', '' + (c + 1)));
-                    col.setAttribute(new XMLAttribute('width', COLUMN_WIDTH));
+                    col.setAttribute(new XMLAttribute('width', '' + (columnWidths?.[c] ?? DEFAULT_COLUMN_WIDTH)));
                     col.setAttribute(new XMLAttribute('customWidth', '1'));
                     columnsElement.addElement(col);
                 }
@@ -156,8 +160,9 @@ export class ExcelWriter {
                     cellElement.setAttribute(new XMLAttribute('r', this.columnUtils.columnName(c) + (r + 1)));
 
                     if (typeof cellValue === 'string') {
+                        let isBoldHeaderRow: boolean = r === 0 && sheet.getBoldHeader();
                         cellElement.setAttribute(new XMLAttribute('t', 's'));
-                        cellElement.setAttribute(new XMLAttribute('s', '1'));
+                        cellElement.setAttribute(new XMLAttribute('s', '' + (isBoldHeaderRow ? headerStyleIndex : 1)));
                         let vElement: XMLElement = new XMLElement('v');
                         vElement.addString('' + unique.get(cellValue));
                         cellElement.addElement(vElement);
@@ -265,6 +270,7 @@ export class ExcelWriter {
         let sheetDocument: XMLDocument = this.parseEntry(entries, 'xl/worksheets/sheet1.xml');
         let sheetRoot: XMLElement = this.requireRoot(sheetDocument, 'xl/worksheets/sheet1.xml');
 
+        let columnWidths: number[] | undefined = sheet.getColumnWidths();
         let columnsElement: XMLElement | undefined = sheetRoot.getChild('cols');
         if (columnsElement) {
             columnsElement.setContent([]);
@@ -272,7 +278,7 @@ export class ExcelWriter {
                 let col: XMLElement = new XMLElement('col');
                 col.setAttribute(new XMLAttribute('min', '' + (i + 1)));
                 col.setAttribute(new XMLAttribute('max', '' + (i + 1)));
-                col.setAttribute(new XMLAttribute('width', COLUMN_WIDTH));
+                col.setAttribute(new XMLAttribute('width', '' + (columnWidths?.[i] ?? DEFAULT_COLUMN_WIDTH)));
                 col.setAttribute(new XMLAttribute('customWidth', '1'));
                 columnsElement.addElement(col);
             }
@@ -286,6 +292,8 @@ export class ExcelWriter {
 
         let hasDate: boolean = rows.some((row: CellValue[]) => row.some((v: CellValue) => v instanceof Date));
         let dateStyleIndex: number = hasDate ? this.ensureDateStyleIndex(entries) : -1;
+
+        let headerStyleIndex: number = sheet.getBoldHeader() ? this.ensureHeaderStyleIndex(entries) : -1;
 
         let unique: Map<string, number> = new Map();
         let stringCount: number = 0;
@@ -319,8 +327,9 @@ export class ExcelWriter {
                         si.addElement(t);
                         sstRoot.addElement(si);
                     }
+                    let isBoldHeaderRow: boolean = r === 0 && sheet.getBoldHeader();
                     cellElement.setAttribute(new XMLAttribute('t', 's'));
-                    cellElement.setAttribute(new XMLAttribute('s', '1'));
+                    cellElement.setAttribute(new XMLAttribute('s', '' + (isBoldHeaderRow ? headerStyleIndex : 1)));
                     let vElement: XMLElement = new XMLElement('v');
                     vElement.addString('' + unique.get(cellValue));
                     cellElement.addElement(vElement);
@@ -378,6 +387,59 @@ export class ExcelWriter {
         newXf.setAttribute(new XMLAttribute('applyNumberFormat', '1'));
         cellXfsElement.addElement(newXf);
         cellXfsElement.setAttribute(new XMLAttribute('count', '' + (xfs.length + 1)));
+        this.writeEntry(entries, 'xl/styles.xml', stylesDocument);
+        return xfs.length;
+    }
+
+    private ensureHeaderStyleIndex(entries: Map<string, Buffer>): number {
+        let stylesDocument: XMLDocument = this.parseEntry(entries, 'xl/styles.xml');
+        let root: XMLElement = this.requireRoot(stylesDocument, 'xl/styles.xml');
+
+        let fontsElement: XMLElement | undefined = root.getChild('fonts');
+        let cellXfsElement: XMLElement | undefined = root.getChild('cellXfs');
+        if (!fontsElement || !cellXfsElement) {
+            return 1;
+        }
+
+        let fonts: XMLElement[] = fontsElement.getChildren().filter((child: XMLElement) => child.getName() === 'font');
+        let boldFont: XMLElement = new XMLElement('font');
+        boldFont.addElement(new XMLElement('b'));
+        let sz: XMLElement = new XMLElement('sz');
+        sz.setAttribute(new XMLAttribute('val', '12'));
+        boldFont.addElement(sz);
+        let color: XMLElement = new XMLElement('color');
+        color.setAttribute(new XMLAttribute('theme', '1'));
+        boldFont.addElement(color);
+        let name: XMLElement = new XMLElement('name');
+        name.setAttribute(new XMLAttribute('val', 'Calibri'));
+        boldFont.addElement(name);
+        let family: XMLElement = new XMLElement('family');
+        family.setAttribute(new XMLAttribute('val', '2'));
+        boldFont.addElement(family);
+        let scheme: XMLElement = new XMLElement('scheme');
+        scheme.setAttribute(new XMLAttribute('val', 'minor'));
+        boldFont.addElement(scheme);
+
+        let boldFontId: number = fonts.length;
+        fontsElement.addElement(boldFont);
+        fontsElement.setAttribute(new XMLAttribute('count', '' + (fonts.length + 1)));
+
+        let xfs: XMLElement[] = cellXfsElement.getChildren().filter((child: XMLElement) => child.getName() === 'xf');
+        let newXf: XMLElement = new XMLElement('xf');
+        newXf.setAttribute(new XMLAttribute('numFmtId', '0'));
+        newXf.setAttribute(new XMLAttribute('fontId', '' + boldFontId));
+        newXf.setAttribute(new XMLAttribute('fillId', '0'));
+        newXf.setAttribute(new XMLAttribute('borderId', '0'));
+        newXf.setAttribute(new XMLAttribute('xfId', '0'));
+        newXf.setAttribute(new XMLAttribute('applyFont', '1'));
+        newXf.setAttribute(new XMLAttribute('applyAlignment', '1'));
+        let alignment: XMLElement = new XMLElement('alignment');
+        alignment.setAttribute(new XMLAttribute('vertical', 'top'));
+        alignment.setAttribute(new XMLAttribute('wrapText', '1'));
+        newXf.addElement(alignment);
+        cellXfsElement.addElement(newXf);
+        cellXfsElement.setAttribute(new XMLAttribute('count', '' + (xfs.length + 1)));
+
         this.writeEntry(entries, 'xl/styles.xml', stylesDocument);
         return xfs.length;
     }

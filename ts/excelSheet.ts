@@ -12,15 +12,22 @@
 
 import { CellValue } from './cellValue.js';
 
+export interface ExcelSheetOptions {
+    columnWidths?: number[];
+    boldHeader?: boolean;
+}
+
 export class ExcelSheet {
     private name: string;
     private headers: string[];
     private rows: CellValue[][];
+    private options: ExcelSheetOptions;
 
-    constructor(name: string, headers: string[], rows: CellValue[][]) {
+    constructor(name: string, headers: string[], rows: CellValue[][], options?: ExcelSheetOptions) {
         this.name = name;
         this.headers = headers;
         this.rows = rows;
+        this.options = options ?? {};
     }
 
     getName(): string {
@@ -33,5 +40,13 @@ export class ExcelSheet {
 
     getRows(): CellValue[][] {
         return this.rows;
+    }
+
+    getColumnWidths(): number[] | undefined {
+        return this.options.columnWidths;
+    }
+
+    getBoldHeader(): boolean {
+        return this.options.boldHeader ?? false;
     }
 }
